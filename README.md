@@ -398,4 +398,138 @@ such classes are to be marked as "abstract" ; abstract classes can't be instanti
 abstract methods ==> all inherited classes should compulsorily override them.
 
 ===============================
+ 
+
+ public class MicroWave extends Product {
+
+ 	isExpensive() {
+
+ }
+}
+
+public class WashingMachine extends product {
+	isExpensive() {
+
+ }
+}
+
+	Product[] products = new Product[500]; // Array of 5 Pointers
+		products[0] = new Tv(133, "Sony Bravia", 135000.00, "LED"); // upcasting
+		products[1] = new Mobile(453, "MotoG", 12999.00, "4G");
+		products[2] = new MicroWave(634, "Onida Thunder", 3500.00, "CRT");
+		products[3] = new Mobile(621, "iPhone XR", 99999.00, "4G");
+		products[4] = new WashingMachine(844, "Oppo", 9999.00, "4G");
+	
+
+===============
+
+code without upcasting:
+
+Tv tvs = new Tv[1000];
+Mobile mobiles = new Mobile[5000];
+WashingMachine wms = new WashingMachine[100];
+
+for expensive:
+
+for(Tv t : tvs) {
+	if(t.isExpensive()) {
+		..
+	}
+}
+
+for(Mobiles m : mobiles) {
+	if(m.isExpensive()) {
+		..
+	}
+}
+
+for(WashingMachine m : wms) {
+	if(m.isExpensive()) {
+		..
+	}
+}
+
+===========================
+
+Day 2:
+======
+https://github.com/BanuPrakash/CISCO12-2020
+
+Recap:
+1) JRE , JVM
+2) OOP with Java 
+[ class , object, instance var, static variables, static and instance methods, constructors]
+== vs equals()
+toString()
+3) packages
+4) logically group classes 
+5) Generalization and Specialization relationship ==> inheritance
+ 	extends
+ 	abstract class and abstract methods
+ 	override concepts
+ 	SOLID design priciple ==> OCP ==> open for extension; close for a change
+ 	Reflection API ==> invoke methods
+
+==============
+Realization relationship
+
+A component/object will realize the behaviour specified by other in order to communicate.
+
+Realization ==> following a contract
+
+In Java we interface type for realization relationship
+
+	interface interfaceType {
+		abstract methods
+		constants
+	}
+
+	can't have state and behaviour defintions.
+
+
+	interface ProductDao {
+		void addProduct(Product p);
+		Product getProduct(int id);
+	}
+
+	by default all methods in interface are abstract and public
+
+	public abstract void addProduct(Product p);
+
+	// ProductDaoMySQLImpl realizes the ProductDao behaviour
+	public class ProductDaoMySQLImpl implements ProductDao {
+		// code 
+		// instance var
+
+		public void addProduct(Product p) {
+			SQL statements
+		}
+		public Product getProduct(int id) {
+
+		}
+	}
+
+	public class ProductDaoMongoDbImpl implements ProductDao {
+		// code 
+		// instance var
+
+		public void addProduct(Product p) {
+			Monogodb methods
+		}
+		public Product getProduct(int id) {
+
+		}
+	}
+
+	===============
+
+	Why Program to interface?
+		1) Loose coupling
+		2) DESIGN
+		3) IMPLEMENTATION
+		4) TESTING
+		5) INTEGRATION
+
+==============================
+
 

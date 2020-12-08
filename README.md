@@ -793,6 +793,185 @@ Unit testing in java
 Frameworks ==> JUnit; TestNG
 
 Along with your code parallely you should write test code
+==========
+	Exception Handling
 
+	Any abnormal condition that arises during program execution is a exception.
+	Exception object contains the following information:
+		1) What went wrong?
+		2) Why did it go wrong?
+		3) Where?
+
+ 	
+ 	Error type of exceptions can't be handled in application;
+ 	system is going to crash; fix and re-run
+
+ 	Exception type of exceptions we can handle [ alternate flow]
+
+
+ArithmeticException is unchecked exception:
+
+public class First {
+
+	public static void main(String[] args) {
+		System.out.println("Hello");
+			doTask();
+		System.out.println("End!!");
+	}
+
+	private static void doTask() {
+		int x = 10;
+		int y  = 0;
+		
+		int res = x /y;
+		System.out.println(res);
+	}
+
+}
+
+Unchecked Exceptions needs to be handled using try-catch syntax
+
+try {
+	// actual code
+} catch(TypeOfException1 ex) {
+	
+} catch(TypeOfException2 ex) {
+	
+}
+
+
+
+
+Recommended way to handle unchecked exceptions:
+private static void doTask() {
+		int x = 10;
+		int y  = 0;
+		if(y != 0) {		
+			int res = x /y;
+			System.out.println(res);
+	    }
+	}
+
+
+==
+
+public static void main(String[] args) {	
+		Employee emp = new Employe(,,,);
+		 EmployeeDao empDao = EmployeeDaoFactory.getEmployeeDao();
+		 if( empDao != null) {
+		 empDao.addEmployee(emp);
+		}
+	}
+
+Avoid:
+public static void main(String[] args) {	
+		Employee emp = new Employe(,,,);
+		 EmployeeDao empDao = EmployeeDaoFactory.getEmployeeDao();
+		 try {
+		 	empDao.addEmployee(emp);
+		  } catch(NullPointerException ex) {
+		  		ex.preintStackTrace();
+		 	}
+		}
+	}
+======================
+
+finally block; compulsory excecute block; 
+exception occurs or not this block executs
+
+Release of resources should be done in finally
+
+try {
+		open file
+		open db connection
+		read from a file
+		store into database
+	
+} catch(SQLException ex) {
+	// exception handling code
+} catch(IOException ex) {
+	// exception handling code
+} finally {
+	close file
+	close dbconnection
+}
+=========================
+
+Annotation:
+	==> metadata [ data about data]
+
+Metadata can be in the form of XML or annotation
+
+@Override 
+@Test
+
+Things we need to know about annotation:
+1) Who uses it?
+	COMPILER
+	CLASSLOADER
+	JRE
+2) Where can i apply?
+	TYPE [ class , interface , annoations]
+	METHOD 
+	FIELD
+	CONSTRUCTOR
+
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.SOURCE)
+	public @interface Override {
+	}
+
+	=======================
+
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.CLASS)
+	public @interface Mobile {
+		String make();
+	}
+
+	@Mobile(make="Samsung")
+	public class Pubg extends Game {
+
+	}
+==========
+
+
+@Retention(value=RetentionPolicy.RUNTIME)
+@Target(value={ElementType.METHOD})
+public  @interface Test {
+}
+=================
+
+lets create 2 annoations 
+1) Table
+2) Column
+
+Annotations has only properties and not variables and methods
+
+@Retention(RUNTIME)
+@Target(TYPE)
+public @interface Table {
+	String name();
+}
+
+name="products" <======== setting name
+
+x = name() <========= getting name
+
+
+
+@Column(name="pname")
+
+===========
+
+never concat a string to create a new String
+
+String s = "Hello";
+
+s += "World";
+
+s += "123";
+
+s += "Bye";
 
 

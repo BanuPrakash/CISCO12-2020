@@ -53,6 +53,9 @@ Web application ; Spring Framework
 		3)  Groovy ..
 
     -----------------------------------------------
+    class Test {
+
+    }
     Account.java
 
     public class Account {
@@ -73,6 +76,7 @@ Web application ; Spring Framework
     public class AccountClient {
     	public static void main(String[] args) {
     		Account first = new Account();
+
     		first.deposit(5000);
     		System.out.println(first.getBalance());
 
@@ -531,5 +535,264 @@ In Java we interface type for realization relationship
 		5) INTEGRATION
 
 ==============================
+
+	download interfaceexample.zip ==> extract
+	Good part: loose coupling; switching between different strategies
+
+	issues with existing code using interface:
+		==> client code is getting changed [ clients are hetergenous; many clients; deployed across the globe]
+		==> implmentation is exposed to client
+
+	============
+
+	Configuration files 
+	==================
+
+	dbconfig.properties
+	DAO=MYSQL
+
+
+	public class EmployeeDaoFactory {
+
+	// NOT OCP
+	public static EmployeeDao getEmployeeDao() {
+		will read dbconfig
+		let config be value read from "DAO" key in properites file
+		if(config.equals("MYSQL")) {
+			return new EmployeeDaoMySQLImpl();
+		} else if (config.equals("MONGO")) {
+			return new EmployeeDaoMongimpl();
+		}
+	}
+}
+
+========
+
+	Creating objects using Reflection API
+
+	1) How objects are created?
+		if class name is known
+		new ClassName();
+
+	2) If class is not know how to create a object
+		dbconfig.properties
+		DAO=com.cisco.prj.dao.EmployeeDaoMongoImpl
+
+
+		String str = read from "DAO" property of dbconfig.properties
+
+		now we have str = "com.cisco.prj.dao.EmployeeDaoMongoImpl";
+
+		Class.forName(str);
+
+		Classloader loads a class
+
+
+		Class.forName(str).newInstance();
+
+		===========
+
+		str = "java.lang.String";
+
+		Class.forName(str).newInstance(); // creates a String object
+
+		str = "java.util.Date"
+		Class.forName(str).newInstance(); // creates a Date object
+
+
+		=======
+ 		// static block
+		static {
+			code gets execueted only once as soon as class is loaded
+		}
+
+================
+
+ interfaces for OCP
+
+ 	to perfom operations like sort, max, min we need to have comparable objects
+
+ 	interface Comparable {
+ 		int compareTo(Object obj);
+ 	}
+
+ 	class Names implements Comparable {
+
+ 		public int compareTo(Object obj) {
+ 			length; lexical
+ 		}
+ }
+
+Names[] = {George Brad Angelina Chris Lee}
+
+// OCP
+ void sort(Comparable[] elems) {
+ 	i loop
+ 	j loop i + 1
+ 		if( elems[i].compareTo(elems[j]) > 0 )
+ 			swap logic
+}
+
+
+class Rectangle implements Comparable {
+	
+	public int compareTo(Object obj) {
+ 			return area diff
+ 		}
+}
+==================================================
+
+interface Swim { void swim(); } 
+interface Dance { void dance(); }
+interface Fight { void fight(); }
+
+// actor is capable of dancing
+class Actor implements Dance {
+		public void dance() {
+			//
+		}
+}
+// hero is a Actor; he can dance
+// he is also capable to fight and swim
+class Hero extends Actor implements Fight, Swim {
+		public void fight() {}
+		public void swim() {}
+}
+
+Fight f = new Actor(); // error
+Fight f = new Hero(); // valid or not
+f.fight(); // works
+f.dance(); // ? error
+
+Dance d = (Dance) f;
+d.dance(); // works
+======================================
+	
+	CustomerInterface {
+			login()
+			getBalance()
+			transfer()
+	}
+
+	ManagerInterface {
+		createAccount()
+		viewTodaysTransaction();
+		..
+		lockAccount()
+	}
+
+class BankingApplication implements CustomerInterface, ManagerInterface {
+			login()
+			getBalance()
+			transfer()
+			createAccount()
+		viewTodaysTransaction();
+		..
+		lockAccount()
+}
+========================
+
+
+Anonymous class : class without name
+
+interface Flyable {
+	void fly();
+}
+
+class Bird implements Flyable {
+	// state; name; weight; life
+	// behaviour ; eat; makeSound();
+
+	public void fly() {
+
+	}
+}
+
+class AeroPlane implements Flyable {
+		// state and behaviour
+		public void fly() {
+
+		}
+}
+
+Flyable f= new Bird(); Flyable f = new AeroPlane(); 
+
+Flyable f = new Flyable(); // error
+
+// AVOID
+class Dummy implements Flyable {
+	public void fly() { ... }
+}
+
+
+Flyable f = new Flyable() {
+	public void fly() {
+		jump from 10th floor
+   }	
+};
+
+public void transport(Flyable f) {
+	f.fly();
+}
+=========
+
+java 8 introduced lambda expression ==> shorter form for anonymous class
+
+Functional interface: interface which has only one method to implement
+
+Lambda expressions can be used only on Functionalinterface
+=================================================
+
+Generic Types 
+
+class Rectangle {
+	private int width;
+	private int breadth;
+	..
+}
+
+
+class DRectangle {
+	private double width;
+	private double breadth;
+	...
+}
+
+==================
+
+class Rectangle <T> {
+	private T width;
+	private T breadth;
+	..
+}
+
+Rectangle<Integer> r1 = new Rectangle<Integer>(4,5);
+
+Rectangle<Double> r2 = new Rectangle<Double>(1.4,5.6);
+
+Rectangle<String> r3 = new Rectangle<String>("a","b");
+
+Generics limitation : can't be used on primitive type
+Integer is a type wrapper for int
+Double is a type wrapper for double
+
+=========
+
+ class Rectangle <T1, T2> {
+	private T1 width;
+	private T2 breadth;
+	..
+}
+
+Rectangle<Integer, Double> r1 = new Rectangle<Integer, Double>(4,6.5);
+
+===========================================
+
+Unit testing in java
+
+Frameworks ==> JUnit; TestNG
+
+Along with your code parallely you should write test code
+
 
 

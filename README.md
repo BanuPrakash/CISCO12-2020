@@ -973,5 +973,471 @@ s += "World";
 s += "123";
 
 s += "Bye";
+============================
+package com.cisco.prj.entity;
 
+public class Product implements Comparable<Product> {
+	private int id;
+	private String name;
+	private double price;
+	private String category;
+
+	public Product() {
+	}
+
+	public Product(int id, String name, double price, String category) {
+		this.id = id;
+		this.name = name;
+		this.price = price;
+		this.category = category;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	@Override
+	public int compareTo(Product o) {
+		return this.id - o.id;
+	}
+
+	@Override
+	public String toString() {
+		return "Product [id=" + id + ", name=" + name + ", price=" + price + ", category=" + category + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		if (id != other.id)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
+
+}
+===========
+List<Product> products = new ArrayList<>();
+		products.add(new Product(645, "Hp Laptop", 135000.00, "computer"));
+		products.add(new Product(224, "iPhone", 98000.00, "mobile"));
+		products.add(new Product(834, "Logitech Mouse", 600.00, "computer"));
+		products.add(new Product(5, "Sony Bravia", 125000.00, "tv"));
+		products.add(new Product(912, "One Plus", 32000.00, "mobile"));
+		products.add(new Product(88, "HP Printer", 19000.00, "computer"));
+//		products.add(new Product(834, "Logitech Mouse", 600.00, "computer"));
+=============
+
+Product[] products = new Product[6];
+		products[0] = new Product(645, "Hp Laptop", 135000.00, "computer");
+		products[1] = new Product(224, "iPhone", 98000.00, "mobile");
+		products[2] = new Product(834, "Logitech Mouse", 600.00, "computer");
+		products[3] = new Product(5, "Sony Bravia", 125000.00, "tv");
+		products[4] = new Product(912, "One Plus", 32000.00, "mobile");
+		products[5] = new Product(88, "HP Printer", 19000.00, "computer");
+
+==========
+
+package com.cisco.prj.client;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class MovieExample {
+
+	public static void main(String[] args) {
+		BufferedReader breader = null;
+		try {
+			Path path = Paths.get("src/", "movies.csv");
+			breader = Files.newBufferedReader(path, StandardCharsets.ISO_8859_1);
+
+		} catch (IOException exception) {
+			System.out.println("Error occured while trying to read the file");
+			System.exit(0);
+		}
+
+//	    breader.lines().collect(Collectors.toList());
+
+		// To get the list of all movie names
+		List<String> movies = breader.lines()
+				.skip(1)
+				.map(line -> Arrays.asList(line.split(";")).get(0))
+				.collect(Collectors.toList());
+
+		System.out.println(movies);
+
+		breader = null;
+		try {
+			Path path = Paths.get("src/", "movies.csv");
+			breader = Files.newBufferedReader(path, StandardCharsets.ISO_8859_1);
+
+		} catch (IOException exception) {
+			System.out.println("Error occured while trying to read the file");
+			System.exit(0);
+		}
+
+		
+		// A Beautiful Mind Director
+		breader.lines() 
+			.skip(1)
+			.map(line -> Arrays.asList(line.split(";")))
+			.filter(movie -> {
+				String movieName = movie.get(0);
+				return movieName.trim().equalsIgnoreCase("A Beautiful Mind");
+			}).forEach(movie -> {
+				String director = movie.get(2);
+				System.out.println("A Beautiful Mind was directed by " + director);
+		});
+
+		breader = null;
+		try {
+			Path path = Paths.get("src/", "movies.csv");
+			breader = Files.newBufferedReader(path, StandardCharsets.ISO_8859_1);
+
+		} catch (IOException exception) {
+			System.out.println("Error occured while trying to read the file");
+			System.exit(0);
+		}
+
+		
+		// Top 5 movies voted on IMDB
+		breader.lines()
+			.skip(1)
+			.map(line -> Arrays.asList(line.split(";")))
+			.filter(movie -> {
+				String imdbVotes = movie.get(9).trim();
+				return !imdbVotes.equals("");
+			})
+			.sorted((movie1, movie2) -> {
+				String m1Votes = movie1.get(9).trim();
+				String m2Votes = movie2.get(9).trim();
+				return Integer.valueOf(m2Votes).compareTo(Integer.valueOf(m1Votes));
+			})
+			.limit(5)
+			.forEach(movie -> {
+				System.out.println(movie.get(0) + " --- " + movie.get(9));
+			});
+
+	}
+
+}
+
+=========
+
+Day 3:
+-------------
+	Recap: OOP, Inheritance and Realization relationship [ interface and implements]
+	Exception Handling and Annotations
+
+	overriding is for instance methods [ Dynamic binding based on actual instance pointed to]
+	Product p = new Mobile(...);
+	p.isExpensive(); // invokes method of Mobile and not of Product
+
+	Shadowing: [ Reference]
+	public class Base {
+		public static void doTask() {
+			System.out.println("one");
+		}
+	}
+
+	public class Derived extends Base {
+		// shadowing
+		public static void doTask() {
+			System.out.println("second");
+		}
+	}
+
+
+	Base.doTask(); // one
+
+	Derived.doTask(); // second
+================
+
+Java Collection Framework [ containers / data structures]
+
+Array should be the first choice as data containers
+
+int[] elems = new int[100];
+
+Product[] products = new Product[10];
+
+--> Prefer arrays if size is known
+--> Prefer this is add/remove happens at last position
+
+-------------
+
+Issues with array:
+1) size is fixed
+	Product[] products = new Product[10];
+2) adding and removing from arbitrary position is difficult
+3) needs contiguous memory
+
+-----------
+
+Java Collection Framework provides different data containers.
+
+JCF provides interfaces, implementation classes and algorithm classes [sort, binearySearch, max, min]
+
+few implmentation classes are provided by JCf; but you can choose from 3rd party implmentation
+
+
+JCFinterface ===> Apache Collection; vavr.io
+--------------
+
+interface Iterator<T> {
+	boolean hasNext();
+	T next();
+	T remove();
+}
+-------
+
+Comparable and Comparator are used to compare objects to perform operations like sort(), max, min(), ...
+
+Comparable  ==> logic is a part of class [ String, Product ==> compareTo()]; only one logic; default
+
+Comparator ==> logic is a part of client code
+
+String[] names = {George Brad Angelina Chris Lee};
+
+Default sort : Anglina, Brad, Chris, George, ...
+
+Client needs to sort by length: Lee, Brad, Chris, George, Angelina
+------------------------------------------------
+
+
+Always use Comparable to compare unique attributes of object like Primary Key
+
+=================================
+
+List:
+ 	1) supports duplicate elements
+ 	2) supports index based operations
+ 		get(10);
+ 		remove(15);
+ 		add("this", 5)
+ 	3) ordered
+ 	4) re-order [ sort, shuffle, reverse]
+
+Set:
+	1) unique collection
+	2) doesn't support index operations
+	3) not ordered and can't re-order
+
+Vector ==> Legacy ==> very slow ==> code has locking mechanism ==> to avoid data corruption in multithreaded application
+
+In Java Collection Framework ==> Data Containers are interoperble 
+[ stack <--> Queue; LinkedList <--> ArrayList]
+=================================================================
+
+ArrayList list = new ArrayList();
+
+LinkedList list = new LinkedList();
+
+List list = new ArrayList(); // better than prev 2
+
+list = new LinkedList();
+
+==========
+
+List list = new ArrayList();  // AVOID this
+list.add("A");
+list.add(new Product());
+list.add(new Employee());
+
+for(int i = 0; i < list.size(); i++) {
+	if(list.get(i) instanceof String) {
+		String s = (String) list.get(i);
+	} else if (list.get(i) instanceof Product) {
+		Product p = (Product) list.get(i);
+	} 
+
+	..
+}
+-----
+
+List<String> list = new ArrayList<String>(); // generic collection
+list.add("A"); // allows
+list.add(new Product()); // compilation error
+
+for(int i = 0; i < list.size(); i++) {
+	String s = list.get(i);
+}
+-----------------------------------
+
+Java 8 streams and High Order Functions
+---------------------------------------
+
+high order functions are functions which 
+	1) accept other functions as arguments
+	2) returns a function
+
+	==> treat functions as first class members similar to primitive and object
+
+	Commonly used HOF:
+		1) filter
+			get sub set based on predicate
+		2) map
+			to transform data
+		3) reduce
+			to get aggregate [ sum, count, max, min, avg]
+			==> returns a single value [ int or double]
+		4) forEach
+		5) limit
+		6) skip
+		7) flatMap
+		....
+
+
+Object oriented programming:
+ --> we have methods tightly coupled to state of object
+ Account: deposit(amt) ==> we used balance
+
+functional style of programming:
+	--> functions are not coupled to any particural type of objects
+
+Java 8 introduced streams ==> channel along which data flows
+HOF can be used only on streams [ stream can be from collections, Sockets, File, Database]
+
+Terminal Operations: forEach, reduce, collect
+Intermediary Operations: filter, map, skip, limit, flatMap
+
+Stream<T> filter(Predicate<T> predicate);
+
+boolean test(T t);
+p -> p.getCategory().equals("computer")
+
+==========
+
+get the names of mobiles
+forEach(..); iPhone and One Plus
+
+=================
+
+Arrays are covariant; Generic collections are not covariant
+
+Object[] elems = new String[3]; // works fine
+
+if we pass Mobile as T type
+? super T can be Mobile, Product or Object
+
+List<? super T> dest;
+
+==========
+
+T is of Type Product
+
+? extends T ; Product, Mobile or Tv
+
+
+
+List<? extends Comparable> list ; this list can point to any collection which contains objects implmenting Comparable
+
+======================================
+
+Set ==> unique collection
+
+HashSet ==> uses hashCode() and equals() to identify duplicate elements
+=======
+HashCode ==> 
+1) 2 similar objects same hashcode;
+2) posibility is 2 different objects can also have same hash code
+
+
+
+class Rectangle {
+	width and breadth;
+
+	@Override
+	public int hashCode() {
+		return width * breadth;
+	}
+}
+
+Rectangle r1 = new Rectangle(3,4); // 12
+Rectangle r2 = new Rectangle(3,4); // 12
+
+Rectangle r3 = new Rectangle(12,1); // 12
+Rectangle r4 = new Rectangle(1,12); // 12
+Rectangle r5 = new Rectangle(4,3); // 12
+Rectangle r6 = new Rectangle(6,2); // 12
+
+=================================
+
+Primary Key should be good enough
+
+firstName, lastName , middleName
+==============================================
+
+TreeSet is a SortedSet and uses Comparable or Comparator to identify duplicates
+
+=================
+
+Map data containers supports storing of data in key/value pairs
+Dictionary; DNS Server; read from config file and store in memory
+
+key ==> unique
+values -> duplicate support
+
+===========
+
+Map<Employee, Date> empDetails = ....
+
+Now Employee is a key ; it should contain hashCode() and equals()
+
+Map<Product, String> productSupplier = ....
+
+=========================================================
 

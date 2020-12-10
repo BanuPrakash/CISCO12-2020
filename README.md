@@ -1433,11 +1433,691 @@ values -> duplicate support
 
 ===========
 
+package com.cisco.prj.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.cisco.prj.entity.Product;
+
+public class ProductDaoJdbcImpl implements ProductDao {
+ 
+	@Override
+	public List<Product> getProducts() throws DaoException {
+		String SQL = "SELECT id, name, price, quantity FROM products";
+		List<Product> products = new ArrayList<Product>();
+		Connection con = null;
+		try {
+			con = DBUtil.getConnection();
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(SQL);
+			while(rs.next()) {
+				products.add(new Product(rs.getInt("id"), 
+						rs.getString("name"), rs.getDouble("price"),
+						rs.getInt("quantity")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DaoException("unable to get products", e);
+		} finally {
+			DBUtil.closeConnection(con);
+		}
+		
+		return products;
+	}
+
+	@Override
+	public void addProduct(Product p) throws DaoException {
+		String SQL = "INSERT INTO products (id, name, price, quantity) VALUES (0, ?, ?, ?)";
+		Connection con = null;
+		try {
+			con = DBUtil.getConnection();
+			PreparedStatement ps = con.prepareStatement(SQL);
+			ps.setString(1, p.getName());
+			ps.setDouble(2, p.getPrice());
+			ps.setInt(3, p.getQuantity());
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw new DaoException("unable to add product", e);
+		} finally {
+			DBUtil.closeConnection(con);
+		}
+	}
+
+	@Override
+	public Product getProduct(int id) throws DaoException {
+		Product p = null;
+		String SQL = "SELECT id, name, price, quantity FROM products WHERE id = ?";
+		Connection con = null;
+		try {
+			con = DBUtil.getConnection();
+			PreparedStatement ps = con.prepareStatement(SQL);
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) {
+				p = new Product(rs.getInt("id"), 
+						rs.getString("name"), rs.getDouble("price"),
+						rs.getInt("quantity"));
+			}
+		} catch (SQLException e) {
+			throw new DaoException("unable to get products", e);
+		} finally {
+			DBUtil.closeConnection(con);
+		}
+		return p;
+	}
+
+}
+=========
+package com.cisco.prj.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ResourceBundle;
+
+public class DBUtil {
+	private static String DRIVER = "";
+	private static String URL = "";
+	private static String USER = "";
+	private static String PWD = "";
+	
+	static {
+		ResourceBundle res = ResourceBundle.getBundle("database");
+		DRIVER = res.getString("DRIVER");
+		URL = res.getString("URL");
+		USER = res.getString("USER");
+		PWD = res.getString("PWD");
+		
+		try {
+			Class.forName(DRIVER);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static Connection getConnection() throws SQLException {
+		return DriverManager.getConnection(URL,USER, PWD);
+	}
+	
+	public static void closeConnection(Connection con) {
+		if( con != null) {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
+==============
+package com.cisco.prj.entity;
+
+ 
+
+public class Product {
+	private int id;
+	private String name;
+	private double price;
+	private int quantity;
+	
+	public Product() {
+	}
+	public Product(int id, String name, double price, int quantity) {
+		this.id = id;
+		this.name = name;
+		this.price = price;
+		this.quantity = quantity;
+	}
+	
+	 
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+ 
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	public int getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+}
+===========
+mysql> create database CISCO_2020;  
+
+mysql> use CISCO_2; Database changed mysql> create table products (id int PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100), price double, quantity int);  
+
+mysql> insert into products values (0, 'iPhone 11', 89000.00, 100);  
+
+mysql> insert into products values (0, 'Samsung TV', 129000.00, 100);  
+
+mysql> select * from products; 
+==============
+
+===============
+
 Map<Employee, Date> empDetails = ....
 
 Now Employee is a key ; it should contain hashCode() and equals()
 
 Map<Product, String> productSupplier = ....
-
 =========================================================
 
+Java Concurrency ==> Building Multithreaded applications
+
+Process ==> program in execution
+a process should hava unit of work ==> Thread
+
+Single threaded application ==> one unit of work running
+Notepad, calculator, sublime text
+
+Multithreaded applications
+	==> many concurrent units of work execting
+	Eclipse, Browser, Word 
+
+	Word: document editing is a thread; spell check; grammer check; auto save
+==============
+
+Why do we need Multithread application?
+1) Better User experence
+	Browser ==> Network thread; Render text; render image ; event loop; 
+2) Optimization of available Resources
+	one thread => one Core / CPU
+
+	Objects / classes are shared between threads
+	==> Threads are lightweight process
+
+	==> each thread has a seperate stack and shares the heap and loaded class
+
+	Document ==> heap
+
+	Main thread, Grammer check and Spell check are using the same document
+====================================================================================
+
+Runnable interface
+
+interface Runnable {
+	void run();
+} 
+
+Thread class:
+	Thread control methods:
+	a) start()
+	b) sleep(long ms)
+	c) yield()
+	d) join()
+	e) interrupt()
+
+	Deprecated methods:
+	f) suspend()
+	g) resume()
+	i) stop()
+
+	Windows/ Mac ==> Preemptive OS
+============
+
+Daemon threads ==> helper threads ==> no main logic
+
+class Timer extends Thread {
+public void run() {
+	while(true) {
+		update time
+		wait 1 sec
+    }
+ }
+}
+================
+
+Day 4
+======
+Access modifiers; final keyword
+
+Java has the following access modifiers:
+1) private
+2) public
+3) default ==> package private
+4) protected
+
+final keyword:
+1) to declare a constant
+
+final double PI = 3.14159; // constant
+
+PI = 5; // error
+
+2) final class : ==> won't allow inheritance
+
+final class User {
+	
+}
+
+class EsteemUser extends User { // error
+	
+}
+
+3) final methods: can't override
+
+class User {
+	
+	final public User login(String username, String pwd) {
+
+	}
+}
+
+
+class Manager extends User {
+	
+	@Override
+	public User login(String username, String pwd) { // ERROR
+
+	}
+}
+
+4) final reference: constant Pointer
+
+final int[] elems = {4,5,8};
+
+elems[0] = 100; // allows
+
+elems = new int[3]; // error
+
+final Product p = new Product(1,"iPhone11",98000.00);
+p.setPrice(56000.00); // allows
+
+p = new Product(2,"Samsung", 45000); // ERROR because pointer constant
+
+===========
+
+Product p = new Product(1,"iPhone11",98000.00);
+
+modifyProduct(p);
+
+void modifyProduct(final Product prd) {
+	
+}
+==================================================
+
+Garbage Collection:
+
+In java we allocate memory for objects using "new" keyword; we don't release the memory
+
+C program:
+
+malloc / calloc to allocate memory
+
+free(ptr) to relase the memory
+
+C++:
+new to allocate memory
+delete to release the memory
+============
+
+Java has Garbage Collector; whose job is to release the unused memory
+
+Unused memory ==> any memory on heap area which doesn't have pointers to it.
+
+Garbage Collector is a System Group low priority thread; when it starts it clears the unreferenced objects
+on heap
+
+System.gc(); // request to invoke GC
+===============================
+
+
+Threads:
+interface Runnable and Thread class
+
+=========
+
+Thread Safety: => if a member is safe to be used in multi-threaded environment; 
+
+
+local variables ==> reside on stack ==> each thread seperate stack ==> safe
+instance variables ==> on heap ==> shared by all threads ==> not safe
+static var ==> class data ==> shared by threads ==> not safe
+
+=================
+
+critical section ==> where data is getting mutated
+
+
+	since deposit and withdraw are marked as "synchronized"; ==> only if a thread has a mutex/lock/monitor
+	then the thread is given a access to either deposit or withdraw
+
+	once the the thread completes the mthod lock is released
+
+
+public class Utility {
+	List<Data> src = new ArrayList<>();
+		// pull data from DB and update src
+
+	List<Data> dest = new ArrayList<>();
+		// we need to copy 10 elements from src into dest [ pagination]
+
+
+	public static void copy(List<Data> destination, List<Data> source) {
+		synchronized(source) {
+			synchronized(destination) {
+				implmenent copy mechanism
+			}
+		}
+	}
+}
+
+===========================
+
+
+class Account {
+	// heap area lock
+	public synchronized void deposit() {
+
+	}
+	// heap area lock
+	public synchronized void withdraw() {
+
+	}
+
+	// lock on class data
+	public synchronized static void payIntrest() {
+
+	}
+}
+
+Account a1 = new Account(); // one lock
+Account a2 = new Account(); // different lock
+but both share class data lock on Account
+
+============================================
+
+Thread Pool:
+issue with start() method;
+==> creates stack; pushes run() method on stack;
+ once complete; stack is destroyed
+
+ ==> latency involved in creating stack and releasing stack
+
+ Solution ==> thread pool
+ ==============
+
+ 1) add your tasks into your own data container
+ 2) write a seperate thread which keeps checking the size of container
+  if threashold is reached
+  push the tasks as submit into pool
+===================================================
+
+JDBC ==> Java Database Connectivity ==> integration API to connect to relational database
+
+java --> provides interfaces
+database vendors [oracle, microsoft, ..] ===> implementation classes ==> jar files
+
+Steps involved in using JDBC:
+
+1) load database vendor classes
+
+	Class.forName(' database vendor driver class');
+
+2) Establish a database connection
+	
+	getconnection() is a factory method
+	java.sql.Connection con = DriverManager.getConnection(url, username, pwd);
+
+	URL:
+		jdbc:mysql://192.123.11.35:3306/employee_db
+
+		getConnection() returns MySQLConnection
+
+		jdbc:oracle:thin:@189.44.22.67:1521:employee_db
+
+		getConnection() returns OracleConnection
+
+3) send SQL statements
+	a) Statement
+		if SQL is constant / fixed
+
+		"select * from employees"
+
+	b) PreparedStatement
+		if SQL accepts IN parameters
+
+		select * from users where username = ? and password = ?
+
+		? ==> IN parameter	
+
+		insert into users values (?,?,?,?);
+
+	methods:
+		ResultSet executeQuery(); // for "SELECT statements"
+
+		int executeUpdate(); // for INSERT, DELETE and UPDATE SQL
+		// return value is number of rows affected
+
+4) close the connection in finally block		
+
+==========================================
+
+Maven ==> java development tool
+	
+	Why Maven?
+		1) ==> dependency management
+
+		Application ==> first1.3.jar
+					But first1.3.jar has dependency on second5.6.jar
+					and second5.6.jar has dependency on third1.1.jar
+
+		Transitive dependencies
+
+		2) ==> standard structure for applications
+			IDEs  Intellij; Eclipse; NetBeans; ...
+			Maven brings a portable project structure
+
+		3) ==> configure goals
+			CLEAN ==> COMPILE ==> TESTING ==> BUNDLE ==> DEPLOY
+
+	pom.xml ==> Project Object Model 
+
+
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>5.1.27</version>
+</dependency>
+
+ 
+<dependency>
+    <groupId>uber</groupId>
+    <artifactId>drivermodule</artifactId>
+    <version>2.0.0</version>
+</dependency>
+
+<dependency>
+    <groupId>uber</groupId>
+    <artifactId>paymentmodule</artifactId>
+    <version>2.0.0</version>
+</dependency>
+<dependencies>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.27</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>9.3.7.v20160115</version>
+			</plugin>
+			<!-- <plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.3-SNAPSHOT</version>
+			</plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
+public class DBUtil {
+	private static String DRIVER = "";
+	private static String URL = "";
+	private static String USER = "";
+	private static String PWD = "";
+
+	static {
+		ResourceBundle res = ResourceBundle.getBundle("database");
+		DRIVER = res.getString("DRIVER");
+		URL = res.getString("URL");
+		USER = res.getString("USER");
+		PWD = res.getString("PWD");
+
+		try {
+			Class.forName(DRIVER);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Connection getConnection() throws SQLException {
+		return DriverManager.getConnection(URL, USER, PWD);
+	}
+
+	public static void closeConnection(Connection con) {
+		if (con != null) {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
+
+======================================================
+
+Convert "database stand alone" example into "web based application"
+=====================================================================
+
+Servlet technology:
+	write server side java code to build web application
+
+
+	GET http://localhost:8080/register
+		engine creates "request" and "response"
+
+		Any request from Address BAR, Hyperlink
+
+
+	POST http://localhost:8080/register
+		engine creates "request" and "response"	
+
+		FORM data
+
+	@WebServlet("/register")
+	public class RegisterServlet extends HttpServlet {
+
+		public void doGet(HttpServletRequest req, HttpServletResponse res) {
+			// code 
+		}
+
+		public void doPost(HttpServletRequest req, HttpServletResponse res) {
+			// code 
+		}
+	}
+=====================================================
+
+Old version of Servlet API:
+public class RegisterServlet extends HttpServlet {
+
+		public void doGet(HttpServletRequest req, HttpServletResponse res) {
+			// code 
+		}
+
+		public void doPost(HttpServletRequest req, HttpServletResponse res) {
+			// code 
+		}
+	}
+
+
+web.xml
+
+<servlet>
+		<servlet-name>one</servlet-name>
+		<servlet-class>RegisterServlet</servlet-class>
+</servlet>
+
+<servlet-mapping>
+		<servlet-name>one</servlet-name>
+		<url-pattern>/register</url-pattern>
+</servlet-mapping>
+
+==========
+
+Right click on project ==> Run As ==> Maven build ==>
+Goals: jetty:run 
+
+
+Running on different port
+
+jetty:run -Djetty.http.port=9999
+
+=======================
+
+Spring boot ==> JPA ==> Hibernate
+
+
+
+
+
+	
+
+
+
+
+	

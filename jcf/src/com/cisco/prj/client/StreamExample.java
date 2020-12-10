@@ -72,6 +72,8 @@ public class StreamExample {
 			System.out.println("Category :  " + k);
 			v.forEach(System.out::println);
 		});
+		
+		 
 	}
 
 }

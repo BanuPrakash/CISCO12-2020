@@ -2111,13 +2111,153 @@ jetty:run -Djetty.http.port=9999
 
 Spring boot ==> JPA ==> Hibernate
 
+===========================
+
+Day 5
+======
+
+DAO ==> Data Access Object ==> persistence code
+JDBC for persistence into RDBMS
+Database vendors provide implementation classes. Java just provides only interfaces
+
+Connection, Statement, PreparedStatement, ResultSet
+
+Maven/Gradle/Ivy/builder ==> Java Tool ==> Dependency management
+
+JS ==> NPM/yarn
+====================
+
+configured Jetty as servlet engine with web server in pom.xml
+
+Servlet ==> server side java code which runs on Servlet engine. Works on Request-Response programming model
+How a servlet is executed is ==> each servlet is provided a url pattern.
+every servlet has methods to handle HTTP request methods [ GET, POST, PUT, DELETE]
+
+doGet(HttpServletRequest req, HttpservletResponse res);
+doPost(HttpServletRequest req, HttpservletResponse res);
+
+Servlet engine creates request and response objects and injected to these methods
+======================================
+
+Spring Boot and JPA ==> Hibernate
+
+SOLID Design Principles
+
+D ==> Dependency Injection
+
+Spring Framework provides DI
+
+Lightweight framework which manages the life cycle of objects and provides Dependecy injection at its core.
+
+
+Metadata ==> XML
+
+public interface ProductDao {
+	addProduct(Product p);
+}
+
+public class ProductDaoJdbcImpl implments ProductDao {
+		addProduct(..) { ...}
+}
+
+public class ProductDaoMongoImpl implments ProductDao {
+		addProduct(..) { ...}
+}
+
+public class OrderService {
+	private ProductDao productDao;
+
+	public void setProductDao(ProductDao pdao) {
+		this.productDao = pdao;
+	}
+
+	void doAdd(...) {
+		productDao.addProduct(..);
+	}
+}
+
+
+=========================
+
+Metadata can be in the form of Annotation:
+	Spring creates instances of objects which has one of these annotations:
+		1) Component
+		2) Repository
+			DAO codes 
+		3) Service
+		4) Controller
+		5) RestController
+		6) Configuration
 
 
 
+public interface ProductDao {
+	addProduct(Product p);
+}
 
-	
+@Repository
+public class ProductDaoJdbcImpl implments ProductDao {
+		addProduct(..) { ...}
+}
+
+@Service
+public class OrderService {
+	@Autowired
+	private ProductDao productDao;
+
+	public void setProductDao(ProductDao pdao) {
+		this.productDao = pdao;
+	}
+
+	void doAdd(...) {
+		productDao.addProduct(..);
+	}
+}
+
+=============
+Eclipse Market Place : Spring STS
+
+Spring Tools 4 ==> install ==> Restart eclipse
+
+@SpringBootApplication
+	==> Create a Spring container
+	==> @ComponentScan
+			scans for all classes which has any of the above mentioned annoations [ @Component, @Service,. ..]
+			and creates instances 
+	==> @EnableAutoConfiguration
+			scans for all jar files for the above mentioned annotations and creates instance
+
+	==> Autowire
 
 
+	try {
 
 
+	} catch(SQLException ex) {
+		if(ex.getErrorCode() == 23505) {
+			throw new DAOException("Duplicate key")
+		}
+	}
+
+
+	DataAccessException
+===========
+
+@Repository
+public class ProductDaoJpaImpl
+
+spring creates object by name "productDaoJpaImpl"
+
+
+@Service
+public class OrderService {
+spring creates object by name "orderService"
+
+
+@Primary on DAO implmentations 
+
+or in OrderService:
+	@Autowired
+	@Qualifier("productDaoMongoImpl")
+	private ProductDao productDao;
 	

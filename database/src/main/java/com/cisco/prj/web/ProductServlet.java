@@ -23,6 +23,7 @@ public class ProductServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html"); // MIME
 		PrintWriter out = response.getWriter(); // character stream to browser
+		// ServletOutputStream out = res.getOutputStream(); // byte stream to browser
 		out.print("<html>");
 		out.print("<body>");
 		ProductDao productDao = new ProductDaoJdbcImpl();

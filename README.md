@@ -2260,4 +2260,95 @@ or in OrderService:
 	@Autowired
 	@Qualifier("productDaoMongoImpl")
 	private ProductDao productDao;
+==========================================================
+
+ORM ==> Object Relational Mapping [ Java < -- > Relatational Database]
+
+ORM Frameworks:
+ 	Apache OpenJPA, open-source for Java
+	EclipseLink, Eclipse persistence platform
+	Hibernate, open-source ORM framework, widely used
+	Java Data Objects (JDO)
+	JOOQ Object Oriented Querying (jOOQ)
+	Kodo, commercial implementation of both Java Data Objects and Java Persistence API
+	TopLink by Oracle
+
+
+Java ==> JPA ==> Java Persistence API [ Specification for ORM ]	[ like interface for ORM ]
+
+spring.datasource.url = jdbc:mysql://localhost:3306/CISCO_2020?createDatabaseIfNotExist=true
+spring.datasource.username = root
+spring.datasource.password = Welcome123
+spring.jpa.show-sql = true
+spring.jpa.hibernate.ddl-auto = update
+spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5Dialect
+
+
+==========
+spring.jpa.show-sql = true
+	ORM generates SQL based on annoations;
 	
+spring.jpa.hibernate.ddl-auto = update
+	update ==> create table if table doesn't exist; if table exists do the map; if required alter
+
+spring.jpa.hibernate.ddl-auto = create
+	create ==> drop tables and re-create [ useful in testing environment]
+
+spring.jpa.hibernate.ddl-auto = verify
+	verfify ==> don't create tables; check if mapping is proper for existing
+
+spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5Dialect
+	generate SQL for MySQL 5 version
+==============
+DriverManager.getConnection(url, user, pwd) // opens connection
+
+con.close(); // close connection
+
+
+Spring creates a connection pool for database : DataSource based on application.properties
+
+customers products orders and items
+------------------------------------
+
+Order --> establish relationship from here
+
+Order --> customer
+Order --> items
+items --> product
+------------
+Without Cascade:
+public class Order {
+	 @OneToMany 
+	@JoinColumn(name="order_fk")
+	private List<LineItem> items = new ArrayList<>();
+
+
+		suppose one order has 5 items:
+		Order o = new Order();
+		o.add(i1); o.add(i2);  o.add(i3); o.add(i4); o.add(i5);
+
+
+		OrderDao
+			1 call to save order
+			save(o);
+		LineItemDao
+			save(i1);
+			save(i2);
+			save(i3);
+			save(i4);
+			save(i5);
+
+With Cascade:
+	suppose one order has 5 items:
+		Order o = new Order();
+		o.add(i1); o.add(i2);  o.add(i3); o.add(i4); o.add(i5);
+
+public class Order {
+	 
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name="order_fk")
+	private List<LineItem> items = new ArrayList<>();
+
+OrderDao
+			1 call to save order
+			save(o); ==> this will persist all items also

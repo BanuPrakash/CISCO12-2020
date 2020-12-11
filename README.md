@@ -2352,3 +2352,30 @@ public class Order {
 OrderDao
 			1 call to save order
 			save(o); ==> this will persist all items also
+===========
+
+RestController
+	==> Java into representation [ JSON]
+
+	Java <---> Representation
+
+RESTful Web services	
+	A Resource present on server can be served to hetergenous clients in variaous representation
+
+	Decouple client and server
+
+	order json for POST:
+
+	{
+		"customer": {
+			"email" : "a@cisco.com"
+		},
+		"total": 2000,
+		"items" : [
+			{"product": {"id": 2}, "qty": 3, "amount": 500},
+			{"product": {"id": 1}, "qty": 1, "amount": 1500}
+		]
+	}
+===========================================
+
+
